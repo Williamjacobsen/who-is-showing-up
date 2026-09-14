@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
+	"github.com/williamjacobsen/who-is-showing-up/internal"
 )
 
 func main() {
@@ -24,22 +24,7 @@ func main() {
 		return
 	}
 
-	dg.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		fmt.Printf("Message: %q\n", m.Content)
-
-		if m.Author.ID == s.State.User.ID {
-			return
-		}
-
-		switch {
-		case strings.Contains(m.Content, "!help"):
-			_, err = s.ChannelMessageSend(m.ChannelID, "Go here dumbass:\n https://github.com/Williamjacobsen/who-is-showing-up")
-			if err != nil {
-				fmt.Println("Error sending message:", err)
-				return
-			}
-		}
-	})
+	dg.AddHandler(internal.HandleDiscordMessages)
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentMessageContent
 
